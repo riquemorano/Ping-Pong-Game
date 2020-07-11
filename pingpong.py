@@ -1,15 +1,5 @@
 import pygame
 
-amarelo = (255, 255, 0)
-preto = (0, 0, 0)
-branco = (255, 255, 255)
-
-velocidade = 1
-x_tela = 1000
-y_tela = 500
-
-
-
 class Bola:
 
     def __init__(self):
@@ -22,6 +12,7 @@ class Bola:
         self.vel_y = velocidade
 
     def pinta_bola(self):
+        
         tela.fill(preto)
         pygame.draw.circle(
             tela, branco, (int(self.x), int(self.y)), self.raio, 0)
@@ -41,6 +32,7 @@ class Bola:
             self.vel_y = velocidade
 
     def colide_raquete(self, raquete):
+        
         if raquete.x < x_tela/2:
             if self.x - self.raio < raquete.x + raquete.largura:
                 if self.y - self.raio < raquete.y + raquete.altura:
@@ -53,19 +45,19 @@ class Bola:
                     if self.y + self.raio > raquete.y:
                         self.vel_x = -velocidade
 
-        # Colisão com a Tela
+        # ColisÃ£o com a Tela
     def movimenta_bola(self):
+        
         self.x = self.x + self.vel_x
         self.y = self.y + self.vel_y
-    
+
     def marca_pontos(self):
-        
+
         if self.x >= x_tela - 10:
             self.ponto_esquerda = self.ponto_esquerda + 1
-            
+
         elif self.x <= 10:
             self.ponto_direita = self.ponto_direita + 1
-            
 
 class Raquete:
 
@@ -90,11 +82,15 @@ class Raquete:
             self.y = 0
 
     def movimenta_raquete_auto(self):
+        
         self.y = self.bola.y - (self.y/4)
 
     def movimenta_raquete(self, eventos):
+        
         self.y = self.y + self.vel_y
+        
         if self.x < x_tela/2:
+            
             for e in eventos:
 
                 if e.type == pygame.KEYDOWN:
@@ -125,32 +121,59 @@ class Raquete:
                     elif e.key == pygame.K_UP:
                         self.vel_y = 0
 
-
-pygame.init()
-tela = pygame.display.set_mode((x_tela, y_tela), 0)
-fonte = pygame.font.SysFont('arial', 25)
-
-
-
 if __name__ == "__main__":
-    bola = Bola()
 
+# Cores
+    amarelo = (255, 255, 0)
+    preto = (0, 0, 0)
+    branco = (255, 255, 255)
+
+# Tela
+    x_tela = 1000
+    y_tela = 500
+
+# Velocidade
+    velocidade = 1
+
+# Posições
     posicao_esquerda = 10
     posicao_direita = x_tela - 20
 
+# Iniciando Pygame e Objetos
+    pygame.init()
+
+    tela = pygame.display.set_mode((x_tela, y_tela), 0)
+    fonte = pygame.font.SysFont("arial", 28, True, False)
+
+    bola = Bola()
+
     raquete_esquerda = Raquete(posicao_esquerda)
     raquete_direita = Raquete(posicao_direita)
-    
+
+# Inicia o Jogo
     while True:
 
-        # Pinta
+    # Configura Velocidade do Jogo
+        pygame.time.delay(3)
+
+    # Placar
+        texto_placar = f'{bola.ponto_esquerda}        x       {bola.ponto_direita}'
+        
+        img_placar = fonte.render(texto_placar, True, (amarelo))
+
+        x_placar = img_placar.get_width()
+        
+        bola.marca_pontos()
+
+    # Desenha Objetos
         bola.pinta_bola()
+        
         raquete_esquerda.pinta_raquete()
         raquete_direita.pinta_raquete()
+        
+        tela.blit(img_placar, ((int((x_tela/2) - (x_placar/2))), 10))
 
-        pygame.time.delay(3)
-        pygame.display.update()
-
+    # Movimentos e Colisões
         bola.movimenta_bola()
         bola.colide_tela()
 
@@ -160,11 +183,14 @@ if __name__ == "__main__":
         raquete_direita.colide_tela()
         raquete_esquerda.colide_tela()
 
-        bola.marca_pontos()
+    #Atualiza a Tela
+        pygame.display.update()
+
+    # Movimenta Raquete Automáticamente
         # raquete_esquerda.movimenta_raquete_auto()
         # raquete_esquerda.movimenta_raquete_auto()
 
-        # Eventos
+    # Eventos
         eventos = pygame.event.get()
         for e in eventos:
             if e.type == pygame.QUIT:
