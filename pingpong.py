@@ -1,4 +1,5 @@
 import pygame
+import time
 
 class Bola:
 
@@ -45,7 +46,6 @@ class Bola:
                     if self.y + self.raio > raquete.y:
                         self.vel_x = -velocidade
 
-        # ColisÃ£o com a Tela
     def movimenta_bola(self):
         
         self.x = self.x + self.vel_x
@@ -144,7 +144,8 @@ if __name__ == "__main__":
 
     tela = pygame.display.set_mode((x_tela, y_tela), 0)
     fonte = pygame.font.SysFont("arial", 28, True, False)
-
+    tempo = pygame.time.get_ticks()
+    
     bola = Bola()
 
     raquete_esquerda = Raquete(posicao_esquerda)
@@ -152,7 +153,11 @@ if __name__ == "__main__":
 
 # Inicia o Jogo
     while True:
-
+    
+    #Configura Tempo
+        segundos=(pygame.time.get_ticks()-tempo)/1000
+        minutos = segundos/60
+    
     # Configura Velocidade do Jogo
         pygame.time.delay(3)
 
@@ -204,3 +209,6 @@ if __name__ == "__main__":
 
         else:
             velocidade = 4
+        
+        if minutos >= 1:
+            exit()
