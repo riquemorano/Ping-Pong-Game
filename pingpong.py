@@ -7,8 +7,8 @@ class Bola:
         self.ponto_esquerda = 0
         self.ponto_direita = 0
         self.raio = 10
-        self.x = x_tela/2
-        self.y = y_tela/2
+        self.x = x_meio
+        self.y = y_meio
         self.vel_x = velocidade
         self.vel_y = velocidade
 
@@ -50,14 +50,25 @@ class Bola:
         
         self.x = self.x + self.vel_x
         self.y = self.y + self.vel_y
+        
+    def para_bola(self):
+           
+        self.x = x_meio
+        self.y = y_meio
+        
+        pygame.time.wait(1000)
+        
 
     def marca_pontos(self):
 
         if self.x >= x_tela - 10:
             self.ponto_esquerda = self.ponto_esquerda + 1
+            self.para_bola()
 
         elif self.x <= 10:
             self.ponto_direita = self.ponto_direita + 1
+            self.para_bola()
+                        
 
 class Raquete:
 
@@ -131,6 +142,8 @@ if __name__ == "__main__":
 # Tela
     x_tela = 1000
     y_tela = 500
+    x_meio = x_tela/2
+    y_meio = y_tela/2
 
 # Velocidade
     velocidade = 1
@@ -150,25 +163,41 @@ if __name__ == "__main__":
 
     raquete_esquerda = Raquete(posicao_esquerda)
     raquete_direita = Raquete(posicao_direita)
+    
+    relogio = pygame.time.Clock()
 
 # Inicia o Jogo
     while True:
     
     #Configura Tempo
-        segundos=(pygame.time.get_ticks()-tempo)/1000
-        minutos = segundos/60
+    
+        tempo_regressivo = pygame.time.get_ticks() - tempo
+    
+        #minutos = str(tempo_regressivo/60000)
+        segundos = int( (tempo_regressivo%60000)/1000 )
+        
+        texto_relogio = (90 - segundos)
+        texto_relogio = str(texto_relogio)
+
+        #img_relogio = fonte.render(str(texto_relogio), 1, (255,255,255))
+    
+
+        #tela.blit(img_relogio, (x_meio, 50))
+
+        relogio.tick()
     
     # Configura Velocidade do Jogo
-        pygame.time.delay(3)
+        pygame.time.delay(1)
 
     # Placar
-        texto_placar = f'{bola.ponto_esquerda}        x       {bola.ponto_direita}'
+        texto_placar = f'P1:{bola.ponto_esquerda}        T:{texto_relogio}       P2:{bola.ponto_direita}'
         
         img_placar = fonte.render(texto_placar, True, (amarelo))
 
         x_placar = img_placar.get_width()
         
         bola.marca_pontos()
+        pygame.display.update()
 
     # Desenha Objetos
         bola.pinta_bola()
@@ -176,7 +205,7 @@ if __name__ == "__main__":
         raquete_esquerda.pinta_raquete()
         raquete_direita.pinta_raquete()
         
-        tela.blit(img_placar, ((int((x_tela/2) - (x_placar/2))), 10))
+        tela.blit(img_placar, ((int(x_meio - (x_placar/2))), 10))
 
     # Movimentos e Colisões
         bola.movimenta_bola()
@@ -210,5 +239,5 @@ if __name__ == "__main__":
         else:
             velocidade = 4
         
-        if minutos >= 1:
+        if texto_relogio == "0":
             exit()
