@@ -64,10 +64,12 @@ class Bola:
         if self.x >= x_tela - 10:
             self.ponto_esquerda = self.ponto_esquerda + 1
             self.para_bola()
+            self.vel_x = velocidade
 
         elif self.x <= 10:
             self.ponto_direita = self.ponto_direita + 1
             self.para_bola()
+            self.vel_x = -velocidade
                         
 
 class Raquete:
@@ -92,9 +94,9 @@ class Raquete:
         elif self.y < 0:
             self.y = 0
 
-    def movimenta_raquete_auto(self):
+    def movimenta_raquete_auto(self, bola):
         
-        self.y = self.bola.y - (self.y/4)
+        self.y = bola.y - (self.y/4)
 
     def movimenta_raquete(self, eventos):
         
@@ -166,31 +168,27 @@ if __name__ == "__main__":
     
     relogio = pygame.time.Clock()
 
+
 # Inicia o Jogo
+
     while True:
     
     #Configura Tempo
     
-        tempo_regressivo = pygame.time.get_ticks() - tempo
-    
-        #minutos = str(tempo_regressivo/60000)
-        segundos = int( (tempo_regressivo%60000)/1000 )
+        tempo_regressivo = pygame.time.get_ticks()
+        tempo_segundos = 90
+        segundos = int( (tempo_regressivo)/1000 )
+
+        print(f"{segundos} segundos")
         
-        texto_relogio = (90 - segundos)
-        texto_relogio = str(texto_relogio)
-
-        #img_relogio = fonte.render(str(texto_relogio), 1, (255,255,255))
-    
-
-        #tela.blit(img_relogio, (x_meio, 50))
-
+        texto_segundos =str(tempo_segundos - segundos)
         relogio.tick()
     
     # Configura Velocidade do Jogo
         pygame.time.delay(1)
 
     # Placar
-        texto_placar = f'P1:{bola.ponto_esquerda}        T:{texto_relogio}       P2:{bola.ponto_direita}'
+        texto_placar = f'P1:{bola.ponto_esquerda}        T:{texto_segundos:0>2}       P2:{bola.ponto_direita}'
         
         img_placar = fonte.render(texto_placar, True, (amarelo))
 
@@ -221,8 +219,8 @@ if __name__ == "__main__":
         pygame.display.update()
 
     # Movimenta Raquete Automáticamente
-        # raquete_esquerda.movimenta_raquete_auto()
-        # raquete_esquerda.movimenta_raquete_auto()
+        #raquete_esquerda.movimenta_raquete_auto(bola)
+        #raquete_direita.movimenta_raquete_auto(bola)
 
     # Eventos
         eventos = pygame.event.get()
@@ -234,10 +232,10 @@ if __name__ == "__main__":
         raquete_direita.movimenta_raquete(eventos)
 
         if velocidade < 4:
-            velocidade += 0.00015
+            velocidade += 0.00005
 
         else:
             velocidade = 4
         
-        if texto_relogio == "0":
+        if texto_segundos == "0":
             exit()
